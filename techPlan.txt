@@ -1,0 +1,196 @@
+# Technical Plan: AI Maintenance Predictor Dashboard
+
+## 1. Problem Understanding
+
+[2–3 sentences explaining why manual analysis of sensor CSVs is difficult and how predictive models help reduce unplanned downtime.]
+
+**Core Problem:**
+- [What makes predicting failures from raw sensor data challenging?]
+
+**Target Users:**
+- [Maintenance engineers, reliability engineers, operations leaders.]
+
+**Success Criteria:**
+- [How will you know this dashboard is useful for maintenance planning?]
+
+Manual analysis of sensor CSVs can be time consuming and relies heavily on case-by-case subjective interpretation
+The current implementation and challenge leads to reactive maintenance repairs increasing operational cost and non-productive time, and lower asset utilization rates
+By automating this manual workflow, a more proactive solution can be realized leading to asset cost savings and longer asset life cycle utlilization rates
+
+A success metric for the planned dashboard could be asset failure avoidance from predictive recommendation for maintenance of asset (proactive)
+
+## 2. Data & CSV Assumptions
+
+**Expected CSV Structure (Example):**
+- `timestamp`
+- `asset_id`
+- Sensor columns (e.g., `temp`, `vibration`, `pressure`, `current`)
+- `label` (e.g., 0 = normal, 1 = failure / imminent failure)
+
+[Describe your exact assumptions about CSV columns and formats.]
+interface SensorReading {
+  timestamp: string;
+  asset_id: string;
+  tempF: number;
+  pressurePSI: number;
+  vibrationMM: number;
+  failure_flag: number;
+}
+
+**Data Handling:**
+- [How you will validate CSVs.]
+- [How you will handle missing values / outliers.]
+
+column matching to Schema for incoming CSV/uploads
+depending on quality of data some missing values could be ignored
+depending on type of outlier, could be useful for anamoly detection
+
+## 3. Feature Engineering Strategy
+
+**Time-Series Features (Per Asset or Window):**
+- Rolling mean / std over a time window.
+- Min/max values over recent period.
+- Lag features (e.g., previous timestamp values).
+- Aggregations per asset (if using aggregated training examples).
+
+[Describe how you will transform raw time-series into model-ready rows.]
+
+Will look for changes in trends and sensor anamolies
+group incoming data into T+T24hr lookbacks (for example)
+
+## 4. Model Strategy
+
+**Model Choice:**
+- [Random Forest / XGBoost / other scikit-learn compatible classifier.]
+
+**Training Approach:**
+- Feature matrix `X` and label vector `y`.
+- Train/test split or simple validation approach.
+- Model persistence (e.g., joblib/pickle in local storage).
+
+**Risk Mapping:**
+- Model returns probability of failure (e.g., `p_failure`).
+- Map to risk levels:
+  - Green: low probability
+  - Yellow: medium probability
+  - Red: high probability
+
+[Specify approximate thresholds, e.g., `<0.3`, `0.3–0.7`, `>0.7`.]
+
+---
+
+## 5. Architecture Overview
+
+**Components:**
+
+| Component        | Technology (Planned)         | Purpose                                           |
+|------------------|------------------------------|---------------------------------------------------|
+| Backend API      | FastAPI + Python             | CSV handling, feature engineering, model training & prediction |
+| ML Layer         | scikit-learn (RF/XGBoost)    | Classification model for failure risk             |
+| Frontend         | React                        | Upload, dashboard, asset list, asset detail pages |
+| Charts           | Recharts / Chart.js          | Visualization of sensor data and risk             |
+| Containerization | Docker                       | Packaging and deployment                          |
+
+**System Flow (High-Level):**
+1. User uploads CSV via frontend → `/upload`.
+2. Backend stores data and extracts features.
+3. User triggers `/train` to train model on historical data.
+4. Model saved for later use by `/predict`.
+5. `/predict` computes risk for each asset instance.
+6. `/assets` returns asset list with risk status.
+7. Frontend displays asset list and detail views with charts and feature signals.
+
+---
+
+## 6. API Design
+
+| Endpoint       | Method | Purpose                                                   |
+|----------------|--------|-----------------------------------------------------------|
+| `/upload`      | POST   | Upload sensor CSV and store raw data                      |
+| `/train`       | POST   | Trigger feature engineering and model training            |
+| `/predict`     | POST   | Run predictions and compute risk levels                   |
+| `/assets`      | GET    | List assets with current risk (Green/Yellow/Red)          |
+| `/assets/{id}` | GET    | Asset detail: time-series, feature signals, recommendation|
+
+[You may combine `/predict` with `/assets` logic if you prefer, but all must exist.]
+
+---
+
+## 7. Asset Risk & Recommendation Design
+
+**Risk Levels:**
+- Green: [Describe what this means operationally.]
+- Yellow: [Describe implications – monitor / plan maintenance.]
+- Red: [Describe implications – urgent inspection.]
+
+**Recommendations:**
+- [How you will generate a short recommended action per asset (rule-based, simple mapping from risk level, etc.).]
+
+Recommended actions first based on risk mapping for MVP
+
+## 8. UI Wireframe Description
+
+**Dashboard / Asset List Page:**
+- Accordian/Table of assets with:
+  - Asset ID
+  - Risk status (color-coded)
+  - Key metrics (e.g., last temperature, last vibration)
+- Filters for risk level (Green/Yellow/Red).
+
+**Asset Detail View/Reveal:**
+- Time-series chart(s) (Recharts/Chart.js) for sensor values over time.
+- Indicator for current risk and risk history if available.
+- Simple feature importance summary:
+  - Global: top features from model (e.g., RF feature importances).
+  - Or per-asset: simplified explanation (e.g., high vibration → high risk).
+- Text recommendation block (“Recommended action”).
+
+---
+
+## 9. Trade-offs & Decisions
+
+**Decision 1: Feature Windowing Strategy**
+- Chosen approach (e.g., last N minutes/hours per asset).
+- Reason.
+
+**Decision 2: Model Complexity**
+- Chosen model type and size.
+- Reason (e.g., interpretability vs. performance).
+
+**Known Limitations:**
+- [What the MVP will not handle (e.g., concept drift, multistep forecasting, large-scale streaming).]
+
+---
+
+## 10. MVP Scope
+
+**Will Build:**
+- [ ] `/upload`, `/train`, `/predict`, `/assets`, `/assets/{id}` endpoints.
+- [ ] Feature engineering pipeline for basic time-series features.
+- [ ] Working classifier trained from uploaded data.
+- [ ] Risk mapping to Green/Yellow/Red.
+- [ ] React dashboard with asset list and detail pages.
+- [ ] Time-series chart(s) and simple feature importance display.
+
+**Stretch Goals (If Time Permits):**
+- [ ] Multiple models or model selection.
+- [ ] Risk trend over time per asset.
+- [ ] Exportable report per asset or fleet.
+- [ ] Authentication / simple user roles.
+
+---
+
+## 11. Timeline Estimate (24–28h Build)
+
+| Phase                             | Estimated Time |
+|----------------------------------|----------------|
+| Environment & Docker setup       | [X hours]      |
+| CSV ingestion & validation       | [X hours]      |
+| Feature engineering pipeline     | [X hours]      |
+| Model training (`/train`)        | [X hours]      |
+| Prediction & risk mapping        | [X hours]      |
+| Backend endpoints                | [X hours]      |
+| React dashboard & asset UI       | [X hours]      |
+| Charts & detail page             | [X hours]      |
+| Testing & polish                 | [X hours]      |
+
