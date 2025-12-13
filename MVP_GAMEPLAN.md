@@ -812,14 +812,14 @@ The pastel color palette is defined in `src/app/globals.css`:
   --risk-green-200: #bbf7d0;
   --risk-green: #86efac;
   --risk-green-dark: #4ade80;
-  
+
   /* Pastel Risk Colors - Yellow */
   --risk-yellow-50: #fefce8;
   --risk-yellow-100: #fef9c3;
   --risk-yellow-200: #fef08a;
   --risk-yellow: #fde047;
   --risk-yellow-dark: #facc15;
-  
+
   /* Pastel Risk Colors - Red */
   --risk-red-50: #fef2f2;
   --risk-red-100: #fee2e2;
@@ -830,6 +830,7 @@ The pastel color palette is defined in `src/app/globals.css`:
 ```
 
 **Usage in CSS:**
+
 ```css
 .accordion-item.risk-green {
   background: var(--risk-green-50);
@@ -1094,7 +1095,7 @@ function generateSensorReadings(
 ### Setup Phase
 
 - [ ] Initialize Next.js project
-- [ ] Install dependencies (Tailwind, Shadcn, Drizzle, etc.)
+- [ ] Install dependencies (Shadcn, Drizzle, etc.)
 - [ ] Configure TypeScript strict mode
 - [ ] Setup SQLite database
 - [ ] Create project structure
@@ -1117,7 +1118,7 @@ function generateSensorReadings(
 
 ### Frontend Development
 
-- [ ] Tailwind + Shadcn setup
+- [ ] Shadcn setup
 - [ ] Color palette configuration
 - [ ] Upload CSV component
 - [ ] Asset accordion table

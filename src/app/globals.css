@@ -11,57 +11,59 @@
   --background: #ffffff;
   --foreground: #171717;
   --text-muted: #6b7280;
-  
+
   /* Pastel Risk Colors - Green */
   --risk-green-50: #f0fdf4;
   --risk-green-100: #dcfce7;
   --risk-green-200: #bbf7d0;
   --risk-green: #86efac;
   --risk-green-dark: #4ade80;
-  
+
   /* Pastel Risk Colors - Yellow */
   --risk-yellow-50: #fefce8;
   --risk-yellow-100: #fef9c3;
   --risk-yellow-200: #fef08a;
   --risk-yellow: #fde047;
   --risk-yellow-dark: #facc15;
-  
+
   /* Pastel Risk Colors - Red */
   --risk-red-50: #fef2f2;
   --risk-red-100: #fee2e2;
   --risk-red-200: #fecaca;
   --risk-red: #fca5a5;
   --risk-red-dark: #f87171;
-  
+
   /* Border & Divider */
   --border: #e5e7eb;
   --border-dark: #d1d5db;
-  
+
   /* Card & Surface */
   --card-bg: #ffffff;
-  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  
+  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+
   /* Typography */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-  --font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
-  
+  --font-mono: "Menlo", "Monaco", "Courier New", monospace;
+
   /* Spacing Scale */
-  --spacing-xs: 0.25rem;    /* 4px */
-  --spacing-sm: 0.5rem;     /* 8px */
-  --spacing-md: 1rem;       /* 16px */
-  --spacing-lg: 1.5rem;     /* 24px */
-  --spacing-xl: 2rem;       /* 32px */
-  --spacing-2xl: 3rem;      /* 48px */
-  
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+  --spacing-xl: 2rem; /* 32px */
+  --spacing-2xl: 3rem; /* 48px */
+
   /* Border Radius */
-  --radius-sm: 0.25rem;     /* 4px */
-  --radius-md: 0.5rem;      /* 8px */
-  --radius-lg: 0.75rem;     /* 12px */
-  --radius-xl: 1rem;        /* 16px */
-  
+  --radius-sm: 0.25rem; /* 4px */
+  --radius-md: 0.5rem; /* 8px */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-xl: 1rem; /* 16px */
+
   /* Transitions */
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 250ms ease-in-out;
@@ -95,18 +97,35 @@ body {
 }
 
 /* ===== TYPOGRAPHY ===== */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: var(--spacing-md);
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.75rem; }
-h4 { font-size: 1.5rem; }
-h5 { font-size: 1.25rem; }
-h6 { font-size: 1rem; }
+h1 {
+  font-size: 2.5rem;
+}
+h2 {
+  font-size: 2rem;
+}
+h3 {
+  font-size: 1.75rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
+h5 {
+  font-size: 1.25rem;
+}
+h6 {
+  font-size: 1rem;
+}
 
 p {
   margin-bottom: var(--spacing-md);
@@ -169,7 +188,8 @@ code {
 }
 
 /* ===== BUTTON STYLES ===== */
-button, .btn {
+button,
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -208,7 +228,8 @@ table {
   border-spacing: 0;
 }
 
-th, td {
+th,
+td {
   padding: var(--spacing-md);
   text-align: left;
   border-bottom: 1px solid var(--border);
@@ -220,7 +241,9 @@ th {
 }
 
 /* ===== FORM STYLES ===== */
-input, select, textarea {
+input,
+select,
+textarea {
   width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
   font-size: 1rem;
@@ -232,7 +255,9 @@ input, select, textarea {
   transition: border-color var(--transition-fast);
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   outline: none;
   border-color: #3b82f6;
 }
@@ -268,11 +293,12 @@ label {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  font-weight: 500;
 }
 
 .accordion-header:hover {
-  background: var(--risk-green-50);
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .accordion-content {
@@ -284,15 +310,33 @@ label {
   display: block;
 }
 
-/* Risk-specific accordion row colors */
+/* Risk-specific accordion row colors with improved contrast */
 .accordion-item.risk-green {
-  background: var(--risk-green-50);
+  background: var(--risk-green-100);
+  border-left: 4px solid var(--risk-green-dark);
+  color: #064e3b; /* Dark green text for better contrast */
+}
+
+.accordion-item.risk-green .accordion-header:hover {
+  background: var(--risk-green-200);
 }
 
 .accordion-item.risk-yellow {
-  background: var(--risk-yellow-50);
+  background: var(--risk-yellow-100);
+  border-left: 4px solid var(--risk-yellow-dark);
+  color: #713f12; /* Dark yellow/brown text for better contrast */
+}
+
+.accordion-item.risk-yellow .accordion-header:hover {
+  background: var(--risk-yellow-200);
 }
 
 .accordion-item.risk-red {
-  background: var(--risk-red-50);
+  background: var(--risk-red-100);
+  border-left: 4px solid var(--risk-red-dark);
+  color: #7f1d1d; /* Dark red text for better contrast */
+}
+
+.accordion-item.risk-red .accordion-header:hover {
+  background: var(--risk-red-200);
 }

@@ -9,12 +9,14 @@
 ## 🎯 Overview
 
 This dashboard helps maintenance teams transition from reactive to proactive asset management by:
+
 - **Analyzing sensor data** from industrial equipment (temperature, pressure, vibration)
 - **Predicting failure risk** using machine learning models
 - **Visualizing trends** through interactive time-series charts
 - **Recommending actions** based on risk levels (Green/Yellow/Red)
 
 **Key Features:**
+
 - 📤 CSV upload with intelligent validation and outlier detection
 - 🎨 Color-coded accordion table with pastel risk indicators
 - 📊 Expandable asset details with time-series visualization
@@ -60,6 +62,7 @@ This dashboard helps maintenance teams transition from reactive to proactive ass
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 20+ and npm
 - Python 3.10+ (if using Python ML service)
 - Git
@@ -122,6 +125,7 @@ timestamp,asset_id,tempF,pressurePSI,vibrationMM,failure_flag
 ```
 
 **Field Definitions:**
+
 - `timestamp`: ISO 8601 datetime
 - `asset_id`: Unique asset identifier
 - `tempF`: Temperature in Fahrenheit
@@ -136,13 +140,16 @@ See [docs/DATA_SCHEMA.md](docs/DATA_SCHEMA.md) for full documentation.
 ## 🎨 UI Features
 
 ### Asset Table (Accordion Design)
+
 - **Color-coded rows** based on risk level:
   - 🟢 **Green (Pastel)**: Low risk (p < 0.3)
   - 🟡 **Yellow (Pastel)**: Medium risk (0.3 ≤ p < 0.7)
   - 🔴 **Red (Pastel)**: High risk (p ≥ 0.7)
 
 ### Expandable Asset Detail
+
 Each row expands to show:
+
 - Time-series charts for all sensors
 - Risk history timeline
 - Feature importance (top contributors)
@@ -181,6 +188,7 @@ npm run type-check       # TypeScript validation
 See [MVP_GAMEPLAN.md](MVP_GAMEPLAN.md#-git-workflow) for branching strategy.
 
 **Example feature development:**
+
 ```bash
 git checkout -b feature/new-feature
 # Make changes...
@@ -193,13 +201,13 @@ git push origin feature/new-feature
 
 ## 📖 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [MVP_GAMEPLAN.md](MVP_GAMEPLAN.md) | Complete development roadmap |
-| [docs/API.md](docs/API.md) | API endpoint reference |
-| [docs/DATA_SCHEMA.md](docs/DATA_SCHEMA.md) | Database & CSV schemas |
-| [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Development guide |
-| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Deployment instructions |
+| Document                                   | Description                  |
+| ------------------------------------------ | ---------------------------- |
+| [MVP_GAMEPLAN.md](MVP_GAMEPLAN.md)         | Complete development roadmap |
+| [docs/API.md](docs/API.md)                 | API endpoint reference       |
+| [docs/DATA_SCHEMA.md](docs/DATA_SCHEMA.md) | Database & CSV schemas       |
+| [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Development guide            |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)   | Deployment instructions      |
 
 ---
 
@@ -219,6 +227,7 @@ vercel --prod
 ```
 
 Environment variables needed:
+
 ```env
 DATABASE_URL=./data/production.db
 NODE_ENV=production
@@ -245,12 +254,14 @@ npm test src/lib/ml/features.test.ts
 ## 🛣️ Roadmap
 
 ### ✅ MVP (Current)
+
 - CSV upload and validation
 - Predictive model training
 - Risk-based asset visualization
 - Accordion table with expandable details
 
 ### 🔜 Phase 2
+
 - [ ] Real-time asset monitoring
 - [ ] Multi-model comparison
 - [ ] Exportable PDF reports
@@ -258,6 +269,7 @@ npm test src/lib/ml/features.test.ts
 - [ ] Advanced outlier detection
 
 ### 🔮 Future
+
 - [ ] Mobile app
 - [ ] Alert notifications
 - [ ] Integration with IoT devices

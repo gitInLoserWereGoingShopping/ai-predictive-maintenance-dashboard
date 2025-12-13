@@ -9,6 +9,7 @@
 .asset-row {
   cursor: pointer;
   transition: all var(--transition-fast);
+  font-weight: 500;
 }
 
 .asset-row-header {
@@ -17,6 +18,10 @@
   gap: var(--spacing-md);
   align-items: center;
   padding: var(--spacing-lg);
+}
+
+.asset-row strong {
+  font-weight: 700;
 }
 
 .asset-row-detail {
@@ -61,23 +66,32 @@
 }
 
 .recommendation-card.green {
-  background: var(--risk-green-50);
+  background: var(--risk-green-100);
   border-color: var(--risk-green-dark);
+  color: #064e3b; /* Dark green text */
 }
 
 .recommendation-card.yellow {
-  background: var(--risk-yellow-50);
+  background: var(--risk-yellow-100);
   border-color: var(--risk-yellow-dark);
+  color: #713f12; /* Dark yellow/brown text */
 }
 
 .recommendation-card.red {
-  background: var(--risk-red-50);
+  background: var(--risk-red-100);
   border-color: var(--risk-red-dark);
+  color: #7f1d1d; /* Dark red text */
 }
 
 .recommendation-title {
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: var(--spacing-sm);
+  font-size: 1.125rem;
+}
+
+.recommendation-card p {
+  margin-bottom: 0;
+  line-height: 1.6;
 }
 
 /* Upload Component */
@@ -131,7 +145,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .skeleton {
@@ -147,8 +163,12 @@
 }
 
 @keyframes loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Feature Importance */
@@ -283,15 +303,15 @@
     grid-template-columns: 1fr;
     gap: var(--spacing-sm);
   }
-  
+
   .dashboard-actions {
     flex-direction: column;
   }
-  
+
   .dashboard-filters {
     flex-wrap: wrap;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
