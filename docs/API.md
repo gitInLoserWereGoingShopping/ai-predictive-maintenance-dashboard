@@ -11,14 +11,20 @@
 1. [Overview](#overview)
 2. [Authentication](#authentication)
 3. [Error Handling](#error-handling)
-4. [Endpoints](#endpoints)
+4. [Database Helpers](#database-helpers)
+   - [File Operations](#file-operations)
+   - [Asset Operations](#asset-operations)
+   - [Sensor Reading Operations](#sensor-reading-operations)
+   - [Prediction Operations](#prediction-operations)
+   - [Data Quality Operations](#data-quality-operations)
+5. [Endpoints](#endpoints)
    - [POST /upload](#post-upload)
    - [POST /train](#post-train)
    - [POST /predict](#post-predict)
    - [GET /assets](#get-assets)
    - [GET /assets/{id}](#get-assetsid)
-5. [Data Models](#data-models)
-6. [Examples](#examples)
+6. [Data Models](#data-models)
+7. [Examples](#examples)
 
 ---
 
@@ -103,11 +109,395 @@ interface ErrorResponse {
 
 ---
 
+## Database Helpers
+
+Database helper functions provide a clean abstraction layer for all database operations. These functions are used **server-side only** within Next.js API routes and run on Node.js with SQLite.
+
+> **Architecture Note:** Client components use React Query to fetch from API routes → API routes use these helpers → Helpers interact with SQLite database via Drizzle ORM.
+
+### File Operations
+
+Location: `src/lib/db/helpers/files.ts`
+
+#### `createUploadedFile()`
+
+Create a record when a CSV file is uploaded.
+
+```typescript
+async function createUploadedFile(data: {
+  fileName: string;
+  rowCount: number;
+  assetCount: number;
+  status?: "processing" | "processed" | "failed";
+}): Promise<{ id: string }>;
+```
+
+**Used by:** `POST /upload`
+
+**Example:**
+
+```typescript
+const file = await createUploadedFile({
+  fileName: "sensor_data.csv",
+  rowCount: 1200,
+  assetCount: 10,
+  status: "processing",
+});
+// Returns: { id: 'file_abc123' }
+```
+
+#### `getUploadedFileById()`
+
+Retrieve file metadata by ID.
+
+```typescript
+async function getUploadedFileById(id: string): Promise<UploadedFile | null>;
+```
+
+**Used by:** `POST /train`, `POST /predict`
+
+#### `getAllUploadedFiles()`
+
+List all uploaded files with metadata.
+
+```typescript
+async function getAllUploadedFiles(): Promise<UploadedFile[]>;
+```
+
+**Used by:** File management UI (future)
+
+#### `updateFileStatus()`
+
+Update the processing status of an uploaded file.
+
+```typescript
+async function updateFileStatus(
+  id: string,
+  status: "processing" | "processed" | "failed"
+): Promise<void>;
+```
+
+**Used by:** `POST /upload`, background processing
+
+---
+
+### Asset Operations
+
+Location: `src/lib/db/helpers/assets.ts`
+
+#### `createAsset()`
+
+Create a new asset record from CSV data.
+
+```typescript
+async function createAsset(data: {
+  id: string;
+  name: string;
+  type: "pump" | "compressor" | "motor" | "other";
+  location?: string;
+  manufacturer?: string;
+  model?: string;
+  installationDate?: string;
+  lastMaintenanceDate?: string;
+}): Promise<Asset>;
+```
+
+**Used by:** `POST /upload`
+
+**Example:**
+
+```typescript
+const asset = await createAsset({
+  id: "PUMP-303",
+  name: "Hydraulic Pump 303",
+  type: "pump",
+  location: "Building A - Floor 2",
+  manufacturer: "Grundfos",
+  model: "CR-95",
+});
+```
+
+#### `getAssetById()`
+
+Fetch a single asset with full details.
+
+```typescript
+async function getAssetById(id: string): Promise<Asset | null>;
+```
+
+**Used by:** `GET /assets/{id}`
+
+#### `getAllAssets()`
+
+List all assets with optional filtering.
+
+```typescript
+async function getAllAssets(filters?: {
+  type?: string;
+  riskLevel?: "green" | "yellow" | "red";
+}): Promise<Asset[]>;
+```
+
+**Used by:** `GET /assets`
+
+**Example:**
+
+```typescript
+// Get all assets
+const allAssets = await getAllAssets();
+
+// Filter by type
+const pumps = await getAllAssets({ type: "pump" });
+
+// Filter by risk level
+const highRisk = await getAllAssets({ riskLevel: "red" });
+```
+
+#### `getAssetWithReadings()`
+
+Get asset with all sensor readings and latest prediction.
+
+```typescript
+async function getAssetWithReadings(
+  assetId: string,
+  limit?: number
+): Promise<{
+  asset: Asset;
+  readings: SensorReading[];
+  latestPrediction: Prediction | null;
+} | null>;
+```
+
+**Used by:** `GET /assets/{id}` (detailed view)
+
+#### `updateAsset()`
+
+Update asset metadata.
+
+```typescript
+async function updateAsset(id: string, data: Partial<Asset>): Promise<Asset>;
+```
+
+**Used by:** Asset management UI (future)
+
+#### `deleteAsset()`
+
+Remove an asset and its associated data.
+
+```typescript
+async function deleteAsset(id: string): Promise<void>;
+```
+
+**Used by:** Asset management UI (future)
+
+---
+
+### Sensor Reading Operations
+
+Location: `src/lib/db/helpers/readings.ts`
+
+#### `insertSensorReadings()`
+
+Bulk insert sensor readings from CSV (batched for performance).
+
+```typescript
+async function insertSensorReadings(
+  readings: Array<{
+    assetId: string;
+    timestamp: string;
+    tempF: number;
+    pressurePSI: number;
+    vibrationMM: number;
+    failureFlag: number;
+  }>
+): Promise<{ inserted: number }>;
+```
+
+**Used by:** `POST /upload`
+
+**Example:**
+
+```typescript
+const result = await insertSensorReadings([
+  {
+    assetId: "PUMP-303",
+    timestamp: "2025-01-10T10:00:00Z",
+    tempF: 165.2,
+    pressurePSI: 95.3,
+    vibrationMM: 1.2,
+    failureFlag: 0,
+  },
+  // ... more readings
+]);
+// Returns: { inserted: 1200 }
+```
+
+#### `getReadingsByAssetId()`
+
+Fetch all readings for a specific asset.
+
+```typescript
+async function getReadingsByAssetId(
+  assetId: string,
+  options?: {
+    limit?: number;
+    offset?: number;
+    orderBy?: "asc" | "desc";
+  }
+): Promise<SensorReading[]>;
+```
+
+**Used by:** `GET /assets/{id}`, charting components
+
+#### `getLatestReading()`
+
+Get the most recent sensor data for an asset.
+
+```typescript
+async function getLatestReading(assetId: string): Promise<SensorReading | null>;
+```
+
+**Used by:** Dashboard overview, real-time monitoring
+
+#### `getReadingsInTimeRange()`
+
+Filter readings by date range.
+
+```typescript
+async function getReadingsInTimeRange(
+  assetId: string,
+  startDate: string,
+  endDate: string
+): Promise<SensorReading[]>;
+```
+
+**Used by:** Historical analysis, custom reports
+
+---
+
+### Prediction Operations
+
+Location: `src/lib/db/helpers/predictions.ts`
+
+#### `createPrediction()`
+
+Store ML model prediction results.
+
+```typescript
+async function createPrediction(data: {
+  assetId: string;
+  modelId: string;
+  riskLevel: "green" | "yellow" | "red";
+  failureProbability: number;
+  recommendation: string;
+  confidence: number;
+  predictedMaintenanceDate?: string;
+}): Promise<Prediction>;
+```
+
+**Used by:** `POST /predict`
+
+**Example:**
+
+```typescript
+const prediction = await createPrediction({
+  assetId: "PUMP-303",
+  modelId: "model_v1",
+  riskLevel: "yellow",
+  failureProbability: 0.68,
+  recommendation: "Schedule inspection within 7 days.",
+  confidence: 0.85,
+  predictedMaintenanceDate: "2025-01-20",
+});
+```
+
+#### `getLatestPredictionForAsset()`
+
+Get current risk level and recommendation for an asset.
+
+```typescript
+async function getLatestPredictionForAsset(
+  assetId: string
+): Promise<Prediction | null>;
+```
+
+**Used by:** `GET /assets`, `GET /assets/{id}`, dashboard
+
+#### `getPredictionHistory()`
+
+Historical predictions for trend analysis.
+
+```typescript
+async function getPredictionHistory(
+  assetId: string,
+  limit?: number
+): Promise<Prediction[]>;
+```
+
+**Used by:** Prediction accuracy tracking, trend charts
+
+---
+
+### Data Quality Operations
+
+Location: `src/lib/db/helpers/quality.ts`
+
+#### `createDataQualityIssue()`
+
+Log validation problems during CSV upload.
+
+```typescript
+async function createDataQualityIssue(data: {
+  fileId: string;
+  assetId?: string;
+  issueType: "missing_value" | "outlier" | "invalid_format" | "duplicate";
+  severity: "low" | "medium" | "high";
+  description: string;
+  affectedColumn?: string;
+  affectedRow?: number;
+}): Promise<DataQualityIssue>;
+```
+
+**Used by:** `POST /upload` (CSV validation)
+
+**Example:**
+
+```typescript
+await createDataQualityIssue({
+  fileId: "file_abc123",
+  assetId: "PUMP-303",
+  issueType: "outlier",
+  severity: "medium",
+  description: "Temperature reading 250°F exceeds normal range (150-200°F)",
+  affectedColumn: "tempF",
+  affectedRow: 42,
+});
+```
+
+#### `getIssuesByFileId()`
+
+Show what went wrong with an upload.
+
+```typescript
+async function getIssuesByFileId(fileId: string): Promise<DataQualityIssue[]>;
+```
+
+**Used by:** Upload validation UI, error reporting
+
+---
+
 ## Endpoints
 
 ### POST /upload
 
 Upload sensor CSV file and store raw data in the database.
+
+**Database Helpers Used:**
+
+- `createUploadedFile()` - Create file record
+- `createAsset()` - Create new assets from CSV
+- `insertSensorReadings()` - Bulk insert sensor data
+- `createDataQualityIssue()` - Log validation issues
 
 #### Request
 
@@ -198,6 +588,11 @@ curl -X POST http://localhost:3000/api/upload \
 ### POST /train
 
 Trigger model training on uploaded sensor data.
+
+**Database Helpers Used:**
+
+- `getUploadedFileById()` - Retrieve file to train on
+- `getReadingsByAssetId()` - Get sensor data for training
 
 #### Request
 
@@ -290,6 +685,12 @@ curl -X POST http://localhost:3000/api/train \
 ### POST /predict
 
 Generate failure risk predictions for all assets using the trained model.
+
+**Database Helpers Used:**
+
+- `getUploadedFileById()` - Retrieve file for prediction
+- `getReadingsByAssetId()` - Get latest sensor data
+- `createPrediction()` - Store prediction results
 
 #### Request
 
@@ -384,6 +785,11 @@ curl -X POST http://localhost:3000/api/predict \
 ### GET /assets
 
 Retrieve list of all assets with their current risk status.
+
+**Database Helpers Used:**
+
+- `getAllAssets()` - Get all assets with filtering
+- `getLatestPredictionForAsset()` - Get current risk level for each asset
 
 #### Query Parameters
 
@@ -486,6 +892,13 @@ curl http://localhost:3000/api/assets?page=2&limit=20
 ### GET /assets/{id}
 
 Retrieve detailed information for a specific asset including time-series data, feature importances, and recommendations.
+
+**Database Helpers Used:**
+
+- `getAssetById()` - Get asset details
+- `getAssetWithReadings()` - Get asset with sensor readings
+- `getLatestPredictionForAsset()` - Get current prediction
+- `getPredictionHistory()` - Get prediction trends
 
 #### Path Parameters
 
