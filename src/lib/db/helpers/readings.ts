@@ -73,7 +73,7 @@ export async function insertSensorReadings(
  *   offset: 100,
  *   orderBy: 'asc'
  * });
- * 
+ *
  * // Get all readings with default 1000 limit
  * const allReadings = await getReadingsByAssetId('PUMP-303');
  */
