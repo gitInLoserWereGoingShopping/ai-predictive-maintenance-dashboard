@@ -10,7 +10,7 @@
 import fs from "fs";
 import path from "path";
 import { db } from "./client";
-import { assets, sensorReadings, uploadedFiles } from "./schema";
+import { assets, sensorReadings, uploadedFiles, predictions } from "./schema";
 
 // Ensure data directories exist
 const dataDir = path.join(process.cwd(), "data");
@@ -313,6 +313,7 @@ async function seed() {
   try {
     // Clear existing data
     console.log("🗑️  Clearing existing data...");
+    await db.delete(predictions);
     await db.delete(sensorReadings);
     await db.delete(assets);
     await db.delete(uploadedFiles);
@@ -375,6 +376,62 @@ async function seed() {
 
     // Generate test CSV files for upload testing (not in database)
     generateTestCSVFiles();
+
+    // Create demo predictions for visual testing
+    console.log("\n🔮 Creating demo predictions...\n");
+
+    // PUMP-101: Green (low risk)
+    await db.insert(predictions).values({
+      assetId: "PUMP-101",
+      probability: 0.15,
+      riskLevel: "green",
+      recommendation: "Asset operating normally. Continue routine monitoring.",
+      modelVersion: "demo_v1",
+    });
+    console.log("✅ PUMP-101: Green risk");
+
+    // PUMP-204: Yellow (medium risk)
+    await db.insert(predictions).values({
+      assetId: "PUMP-204",
+      probability: 0.58,
+      riskLevel: "yellow",
+      recommendation:
+        "Elevated risk detected. Schedule inspection within 7 days.",
+      modelVersion: "demo_v1",
+    });
+    console.log("✅ PUMP-204: Yellow risk");
+
+    // COMP-105: Red (high risk)
+    await db.insert(predictions).values({
+      assetId: "COMP-105",
+      probability: 0.87,
+      riskLevel: "red",
+      recommendation:
+        "High failure risk detected. Immediate inspection and maintenance required.",
+      modelVersion: "demo_v1",
+    });
+    console.log("✅ COMP-105: Red risk");
+
+    // MOTOR-307: Yellow (medium risk)
+    await db.insert(predictions).values({
+      assetId: "MOTOR-307",
+      probability: 0.62,
+      riskLevel: "yellow",
+      recommendation:
+        "Increasing vibration levels detected. Monitor closely and schedule maintenance.",
+      modelVersion: "demo_v1",
+    });
+    console.log("✅ MOTOR-307: Yellow risk");
+
+    // MOTOR-411: Green (low risk)
+    await db.insert(predictions).values({
+      assetId: "MOTOR-411",
+      probability: 0.08,
+      riskLevel: "green",
+      recommendation: "All parameters within normal range. Asset is healthy.",
+      modelVersion: "demo_v1",
+    });
+    console.log("✅ MOTOR-411: Green risk");
 
     console.log("\n🎯 Ready to test CSV upload and asset monitoring!\n");
   } catch (error) {

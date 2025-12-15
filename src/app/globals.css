@@ -11,6 +11,7 @@
   --background: #ffffff;
   --foreground: #171717;
   --text-muted: #6b7280;
+  --bg-secondary: #f9fafb;
 
   /* Pastel Risk Colors - Green */
   --risk-green-50: #f0fdf4;
@@ -19,12 +20,36 @@
   --risk-green: #86efac;
   --risk-green-dark: #4ade80;
 
+  /* Full Green Color Palette */
+  --color-green-50: #f0fdf4;
+  --color-green-100: #dcfce7;
+  --color-green-200: #bbf7d0;
+  --color-green-300: #86efac;
+  --color-green-400: #4ade80;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
+  --color-green-700: #15803d;
+  --color-green-800: #166534;
+  --color-green-900: #14532d;
+
   /* Pastel Risk Colors - Yellow */
   --risk-yellow-50: #fefce8;
   --risk-yellow-100: #fef9c3;
   --risk-yellow-200: #fef08a;
   --risk-yellow: #fde047;
   --risk-yellow-dark: #facc15;
+
+  /* Full Yellow Color Palette */
+  --color-yellow-50: #fefce8;
+  --color-yellow-100: #fef9c3;
+  --color-yellow-200: #fef08a;
+  --color-yellow-300: #fde047;
+  --color-yellow-400: #facc15;
+  --color-yellow-500: #eab308;
+  --color-yellow-600: #ca8a04;
+  --color-yellow-700: #a16207;
+  --color-yellow-800: #854d0e;
+  --color-yellow-900: #713f12;
 
   /* Pastel Risk Colors - Red */
   --risk-red-50: #fef2f2;
@@ -33,9 +58,22 @@
   --risk-red: #fca5a5;
   --risk-red-dark: #f87171;
 
+  /* Full Red Color Palette */
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+  --color-red-900: #7f1d1d;
+
   /* Border & Divider */
   --border: #e5e7eb;
   --border-dark: #d1d5db;
+  --border-color: #e5e7eb;
 
   /* Card & Surface */
   --card-bg: #ffffff;
